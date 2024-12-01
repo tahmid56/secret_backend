@@ -156,3 +156,72 @@ fn validate_encryption_method(encryption_method: &EncryptionMethod) -> Result<()
     }
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, Validate)]
+pub struct SaveSecretDto {
+    #[validate(length(min = 1, message = "Secret Name is required"))]
+    pub secret_name: String,
+    #[validate(length(min = 1, message = "Secret Value is required"))]
+    pub secret_value: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Validate)]
+pub struct EditSecretDto {
+    #[validate(length(min = 1, message = "Secret Name is required"))]
+    pub secret_name: String,
+    #[validate(length(min = 1, message = "Secret Value is required"))]
+    pub secret_value: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Validate)]
+pub struct FilterSecretDto {
+    #[validate(length(min = 1, message = "Secret Name is required"))]
+    pub secret_name: String,
+    #[validate(length(min = 1, message = "Secret Value is required"))]
+    pub secret_value: String,
+    pub id: uuid::Uuid,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Validate)]
+pub struct RequestQuerySecretVersionDto {
+    #[validate(range(min=1))]
+    pub page: Option<usize>,
+    #[validate(range(min=1, max = 50))]
+    pub limit: Option<usize>,
+    pub id: uuid::Uuid
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct SecretResponse {
+    pub id: String,
+    pub secret_name: String,
+    pub secret_value: String,
+    pub version: i32,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct FilterSecretDto {
+    pub id: String,
+    pub secret_name: String,
+    pub secret_value: String,
+    pub version: i32,
+}
+
+impl FilterSecretDto {
+    pub fn filter_secret(secret: &SecretResponse) -> Self {
+        FilterSecretDto {
+            id: secret.id.to_string(),
+            secret_name: secret.secret_name.clone(),
+            secret_value: secret.secret_value.clone(),
+            version: secret.version,
+        }
+    }
+
+    pub fn filter_secrets(secret: &[SecretResponse]) -> Vec<FilterSecretDto> {
+        secret
+            .iter()
+            .map(|secret| FilterSecretDto::filter_secret(secret))
+            .collect()
+    }
+}
