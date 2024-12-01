@@ -214,7 +214,6 @@ impl FilterSecretDto {
             id: secret.id.to_string(),
             secret_name: secret.secret_name.clone(),
             secret_value: secret.secret_value.clone(),
-            version: secret.version,
         }
     }
 
