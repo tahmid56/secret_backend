@@ -28,7 +28,7 @@ pub struct User {
     pub password: String,
     pub encryption_method: Option<EncryptionMethod>,
     pub keys: Option<Vec<u8>>,
-    pub api_key: Option<String>,
+    pub api_keys: Option<String>,
     pub db_connection: Option<Json<DbConnection>>,
     pub created_at: Option<DateTime<Utc>>,
     pub updated_at: Option<DateTime<Utc>>,

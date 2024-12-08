@@ -1,6 +1,6 @@
 use validator::Validate;
 use serde::{Serialize, Deserialize};
-use crate::models::EncryptionMethod;
+use crate::models::{EncryptionMethod, User};
 use validator::{Validate, ValidationError};
 
 #[derive(Validate, Debug, Default, Clone, Serialize, Deserialize)]
@@ -52,7 +52,7 @@ pub struct FilterUserDto {
     pub name: String,
     pub email: String,
     pub encryption_method: Option<EncryptionMethod>,
-    pub api_key: Option<String>,
+    pub api_keys: Option<String>,
     #[serde(rename = "dbConnectionExists")]
     pub db_connection_exists: bool,
     #[serde(rename = "createdAt")]
@@ -68,7 +68,7 @@ impl FilterUserDto {
             name: user.username.clone(),
             email: user.email.clone(),
             encryption_method: user.encryption_method,
-            api_key: user.api_key.clone(),
+            api_keys: user.api_keys.clone(),
             db_connection_exists: user.db_connection.is_some(),
             created_at: user.created_at.unwrap(),
             updated_at: user.updated_at.unwrap(),
@@ -223,4 +223,21 @@ impl FilterSecretDto {
             .map(|secret| FilterSecretDto::filter_secret(secret))
             .collect()
     }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SecretResponseDto{
+    pub secret: Vec<FilterSecretDto>,
+    pub total_pages: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RequestQuerySecretByKeyDto{
+    pub key: String,
+    pub secret: uuid::Uuid,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RequestQuerySecretByKeyResponseDto{
+    pub value: String
 }
